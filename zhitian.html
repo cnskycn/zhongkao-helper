@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>莞深初升高 · 志愿填报助手</title>
+<style>
+  :root {
+    --blue:#2563eb; --blue-light:#eff6ff; --blue-2:#3b82f6;
+    --orange:#f59e0b; --green:#10b981; --red:#ef4444;
+    --purple:#8b5cf6; --pink:#ec4899;
+    --gray:#6b7280; --gray-light:#f3f4f6; --border:#e5e7eb;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:#f8fafc; color:#1f2937; line-height:1.6;
+  }
+  header {
+    background:linear-gradient(135deg,#1e40af,#3b82f6);
+    color:#fff; padding:24px 16px; text-align:center;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,.15);
+  }
+  header h1 { font-size:20px; font-weight:700; }
+  header p { font-size:12px; opacity:.85; margin-top:2px; }
+  .container { max-width:960px; margin:0 auto; padding:12px 16px 80px; }
+  .nav-tabs {
+    display:flex; gap:0; margin-bottom:12px;
+    background:#fff; border-radius:12px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .nav-tab {
+    flex:1; padding:10px 4px; text-align:center;
+    font-size:13px; font-weight:600; cursor:pointer;
+    border:none; background:#fff; color:var(--gray);
+    transition:all .2s; position:relative;
+  }
+  .nav-tab.active { color:var(--blue); background:var(--blue-light); }
+  .nav-tab.active::after {
+    content:''; position:absolute; bottom:0; left:15%; right:15%;
+    height:3px; background:var(--blue); border-radius:3px 3px 0 0;
+  }
+  .sub-tabs {
+    display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;
+  }
+  .sub-tab {
+    padding:6px 14px; border-radius:20px; font-size:12px;
+    font-weight:500; cursor:pointer; border:1px solid var(--border);
+    background:#fff; color:var(--gray); transition:all .2s;
+  }
+  .sub-tab.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .controls {
+    display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;
+  }
+  .controls input, .controls select {
+    flex:1; min-width:120px; padding:7px 10px;
+    border:1px solid var(--border); border-radius:8px;
+    font-size:12px; background:#fff;
+  }
+  .controls input:focus, .controls select:focus {
+    outline:none; border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(37,99,235,.1);
+  }
+  .stats-bar { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+  .stat-card {
+    background:#fff; border-radius:8px; padding:8px 12px;
+    flex:1; min-width:80px; text-align:center;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  .stat-card .num { font-size:18px; font-weight:700; color:var(--blue); }
+  .stat-card .label { font-size:10px; color:var(--gray); }
+  .school-grid { display:flex; flex-direction:column; gap:6px; }
+  .school-card {
+    background:#fff; border-radius:10px; padding:10px 12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+    transition:transform .15s; cursor:pointer;
+  }
+  .school-card:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,.1); }
+  .school-card .name { font-size:13px; font-weight:600; margin-bottom:4px; }
+  .tag {
+    display:inline-block; font-size:9px; padding:1px 5px;
+    border-radius:4px; margin-left:3px; vertical-align:middle;
+  }
+  .tag-public { background:#dbeafe; color:#1d4ed8; }
+  .tag-private { background:#fce7f3; color:#be185d; }
+  .tag-gongfei { background:#fef3c7; color:#b45309; }
+  .tag-zifei { background:#f3e8ff; color:#7c3aed; }
+  .tag-gaokao { background:#d1fae5; color:#065f46; }
+  .tag-hot { background:#fee2e2; color:#991b1b; }
+  .scores { display:flex; gap:6px; flex-wrap:wrap; font-size:11px; }
+  .score-item { background:var(--gray-light); padding:2px 6px; border-radius:4px; white-space:nowrap; }
+  .score-item .val { font-weight:600; }
+  .trend-up { color:var(--red); } .trend-down { color:var(--green); } .trend-flat { color:var(--gray); }
+  .policy-section { margin-bottom:16px; }
+  .policy-section h3 {
+    font-size:15px; font-weight:700; margin-bottom:8px;
+    padding-left:10px; border-left:3px solid var(--blue);
+  }
+  .policy-card {
+    background:#fff; border-radius:10px; padding:14px;
+    margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  .policy-card h4 { font-size:13px; font-weight:600; margin-bottom:6px; }
+  .policy-card p, .policy-card li { font-size:12px; color:#374151; line-height:1.7; }
+  .policy-card ul { padding-left:16px; }
+  .policy-card table { width:100%; border-collapse:collapse; font-size:11px; margin:4px 0; }
+  .policy-card td, .policy-card th { padding:5px 6px; border:1px solid var(--border); text-align:left; }
+  .policy-card th { background:var(--gray-light); font-weight:600; }
+  .policy-badge {
+    display:inline-block; font-size:10px; padding:2px 8px;
+    border-radius:10px; font-weight:600; margin-right:4px;
+  }
+  .badge-new { background:#dbeafe; color:#1d4ed8; }
+  .badge-imp { background:#fee2e2; color:#991b1b; }
+  .badge-info { background:#d1fae5; color:#065f46; }
+  .policy-toc { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .policy-toc a {
+    display:block; padding:5px 10px; border-radius:6px;
+    background:#fff; border:1px solid var(--border);
+    font-size:11px; color:var(--blue); text-decoration:none; font-weight:500;
+  }
+  .detail-panel {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,.45); z-index:200;
+    display:none; justify-content:center; align-items:center; padding:16px;
+  }
+  .detail-panel.show { display:flex; }
+  .detail-content {
+    background:#fff; border-radius:16px;
+    max-width:520px; width:100%; max-height:80vh;
+    overflow-y:auto; padding:20px; position:relative;
+  }
+  .detail-close {
+    position:absolute; top:10px; right:14px;
+    font-size:22px; cursor:pointer; color:var(--gray);
+    border:none; background:none; line-height:1;
+  }
+  .detail-content h2 { font-size:18px; margin-bottom:12px; }
+  .detail-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .detail-table th { background:var(--gray-light); padding:6px 8px; text-align:left; font-weight:600; border-bottom:2px solid var(--border); }
+  .detail-table td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .no-result { text-align:center; padding:40px 16px; color:var(--gray); }
+  .back-top {
+    position:fixed; bottom:24px; right:24px;
+    width:44px; height:44px; border-radius:50%;
+    background:var(--blue); color:#fff; border:none;
+    font-size:20px; cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.2); display:none; z-index:50;
+  }
+  .footer { text-align:center; padding:20px 16px; font-size:11px; color:var(--gray); }
+  @media (max-width:480px) {
+    header h1 { font-size:17px; }
+    .nav-tab { font-size:11px; padding:8px 2px; }
+    .controls { flex-direction:column; }
+    .controls input, .controls select { min-width:unset; }
+    .stat-card { min-width:calc(50% - 3px); }
+  }
+</style>
+</head>
+<body>
+<header><h1>🎓 莞深初升高 · 志愿填报助手</h1><p>分数线 · 高考成绩 · 中考政策 — ima 知识库数据驱动</p></header>
+<div class="container">
+<div class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" data-view="scores">📊 分数线</button>
+  <button class="nav-tab" data-view="gaokao">🏆 高考成绩</button>
+  <button class="nav-tab" data-view="policy">📋 中考政策</button>
+</div>
+<div id="viewScores">
+  <div class="sub-tabs" id="cityTabs">
+    <button class="sub-tab active" data-city="sz">🏙️ 深圳·公办</button>
+    <button class="sub-tab" data-city="dg">🏙️ 东莞·高中</button>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="🔍 搜索学校名称..." />
+    <select id="dgFilter" style="display:none;">
+      <option value="all">全部类别</option>
+      <option value="本市户籍">🏠 本市户籍</option>
+      <option value="随迁子女">📦 随迁子女</option>
+      <option value="公费生">💰 民办公费</option>
+      <option value="自费生">💳 民办自费</option>
+    </select>
+    <select id="sortSelect">
+      <option value="score-desc">分数从高到低</option>
+      <option value="score-asc">分数从低到高</option>
+      <option value="name">按名称排序</option>
+    </select>
+  </div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="school-grid" id="schoolGrid"></div>
+  <div class="no-result" id="noResult" style="display:none;">😕 没有找到匹配的学校</div>
+</div>
+<div id="viewGaokao" style="display:none;">
+  <div class="sub-tabs" id="gkTabs">
+    <button class="sub-tab active" data-gk="sz">🏙️ 深圳高考</button>
+    <button class="sub-tab" data-gk="dg">🏙️ 东莞高考</button>
+  </div>
+  <div class="controls">
+    <input type="text" id="gkSearch" placeholder="🔍 搜索学校..." />
+    <select id="gkSort">
+      <option value="score-desc">特控率从高到低</option>
+      <option value="score-asc">特控率从低到高</option>
+      <option value="name">按名称排序</option>
+    </select>
+  </div>
+  <div class="stats-bar" id="gkStats"></div>
+  <div class="school-grid" id="gkGrid"></div>
+  <div class="no-result" id="gkNoResult" style="display:none;">😕 没有找到</div>
+</div>
+<div id="viewPolicy" style="display:none;">
+  <div class="sub-tabs" id="pcyTabs">
+    <button class="sub-tab active" data-pcy="sz">🏙️ 深圳政策</button>
+    <button class="sub-tab" data-pcy="dg">🏙️ 东莞政策</button>
+  </div>
+  <div id="policyContent"></div>
+</div>
+</div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-content">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="footer">数据来源：ima知识库「东莞深圳高中数据」· 深圳招考办 · 东莞市教育局 · 仅供参考</div>
+<script>
+// ===================================================================
+// DATA — from ima knowledge base "东莞深圳高中数据" 
+// ===================================================================
+
+// --- 深圳高中分数线 (CSV) ---
+const SZ = [
+["深圳中学",574,567,574,0],["深圳实验学校(高中部)",573,567,570,-3],["深圳外国语学校",572,565,568,-4],
+["深圳高级中学中心校区",572,565,569,-3],["红岭中学",569,560,565,-4],["宝安中学(集团)高中部",568,559,564,-4],
+["深圳大学附属中学(深大附中)",567,558,562,-5],["育才中学",567,559,564,-3],["深圳科学高中",565,555,560,-5],
+["北师大南山附属学校中学部",563,549,562,-1],["南山外国语学校(集团)高级中学",561,553,559,-2],
+["南方科技大学附属中学",561,549,556,-5],["深圳市第二高级中学",561,551,557,-4],["龙城高级中学",560,546,557,-3],
+["翠园中学",559,548,557,-2],["深圳市第二实验学校",558,548,550,-8],["龙华高级中学",557,546,553,-4],
+["深圳实验学校光明高中部",557,543,549,-8],["人大附中深圳学校",556,545,553,-3],
+["深圳外国语学校龙华高中部",555,543,549,-6],["深圳市高级中学东校区",554,541,548,-6],
+["新安中学(集团)高中部",554,540,543,-11],["盐田高级中学",549,537,543,-6],["深圳大学附属实验中学",549,537,546,-3],
+["南头中学",549,538,540,-9],["华中师范大学龙岗附属中学",550,539,545,-5],["广东实验中学深圳学校",null,542,544,null],
+["深圳实验学校明理高中",533,509,511,-22],["深圳外国语学校弘知高中",517,502,514,-3],
+["深圳市格致中学",545,530,537,-8],["深圳市红山中学",544,529,537,-7],["深圳市高级中学创新高中",null,526,532,null],
+["深圳第二外国语学校",541,523,531,-10],["深圳技术大学附属中学",528,518,522,-6],
+["东北师范大学附属中学深圳学校",546,535,530,-16],["深圳北理莫斯科大学附属实验中学",null,534,527,null],
+["龙岗区实验高级中学",532,523,536,-4],["深圳市高级中学理慧高中",null,512,524,null],
+["深圳市第三高级中学(国内高考班)",null,514,524,null],["深圳科学高中龙岗分校",null,538,536,null],
+["深圳市第七高级中学",504,485,501,-3],["深圳外国语学校博雅高中",504,485,501,-3],
+["罗湖外语学校",542,525,522,-20],["福田中学",538,528,531,-7],["宝安第一外国语学校",545,528,537,-8],
+["深圳外国语学校致远高中",492,468,495,-3],["深圳市高级中学文博高中",null,507,512,null],
+["深圳市高级中学有为高中",null,503,517,null],["深圳实验学校崇文高中",503,492,511,-8],
+["深圳实验学校卓越高中",496,481,503,-7],["华侨城中学",547,521,527,-20],["西乡中学",513,488,511,-2],
+["深圳市龙华外国语高级中学",497,482,507,-10],["松岗中学",545,519,536,-9],["观澜中学",501,476,495,-6],
+["福田区外国语高级中学",530,516,524,-6],["深圳实验学校至臻高中",490,473,501,-11],
+["深圳市聚龙科学中学",490,464,485,-5],["坪山高级中学",493,468,492,-1],["光明区高级中学",505,489,508,-3],
+["深圳中学数理高中",528,483,468,-60],["深圳外国语学校理工高中",490,465,489,-1],
+["深圳市第二高级中学深汕实验学校",463,448,null,null],["深圳市致理中学",null,474,501,null],
+["红岭教育集团大鹏华侨中学",522,508,521,-1],["中国科学院深圳理工大学附属实验高级中学",542,528,542,0],
+["深圳市龙津中学",537,525,538,-1],["深圳中学实验高中",null,467,468,null],
+["深圳中学科技高中",null,464,470,null],["深圳市第二实验学校明远高中",486,464,474,-12],
+["深圳市艺术高中",471,450,464,-7],["横岗高级中学",480,458,480,0],["光明中学",482,459,480,-2],
+["龙华中学",468,449,475,-7],["平湖外国语学校",475,451,471,-4],["布吉高级中学",null,474,474,0],
+["布吉中学",null,445,462,null],["深圳市第七高级中学",504,485,501,-3],["沙井中学",474,null,null,null],
+["梅林中学",481,null,null,null],["深圳市燕川中学",515,null,null,null],["深圳市福海中学",501,null,null,null],
+];
+// --- 东莞高中分数线 (CSV: 3年数据 100+学校) ---
+const DG = [
+["公办","东莞中学","本市户籍",744,736,743,-1],["公办","东莞中学","随迁子女",749,720,743,-6],
+["公办","东莞中学松山湖学校","本市户籍",735,728,739,4],["公办","东莞中学松山湖学校","随迁子女",741,737,742,1],
+["公办","松山湖未来学校","本市户籍",731,724,733,2],["公办","松山湖未来学校","随迁子女",727,737,736,9],
+["公办","东莞市第一中学","本市户籍",729,717,728,-1],["公办","东莞市第一中学","随迁子女",740,730,736,-4],
+["公办","东莞实验中学","本市户籍",713,703,711,-2],["公办","东莞实验中学","随迁子女",723,719,723,0],
+["公办","东莞高级中学","本市户籍",719,711,719,0],["公办","东莞高级中学","随迁子女",725,724,727,2],
+["公办","东莞外国语学校","本市户籍",721,717,719,-2],["公办","东莞外国语学校","随迁子女",730,725,721,-9],
+["公办","市第六高级中学","本市户籍",716,707,717,1],["公办","市第六高级中学","随迁子女",729,718,731,2],
+["公办","石龙中学","本市户籍",713,688,708,-5],["公办","石龙中学","随迁子女",728,714,709,-19],
+["公办","常平中学","本市户籍",700,675,702,2],["公办","常平中学","随迁子女",719,708,716,-3],
+["公办","万江中学","本市户籍",703,674,700,-3],["公办","万江中学","随迁子女",724,705,715,-9],
+["公办","虎门中学","本市户籍",668,658,665,-3],["公办","虎门中学","随迁子女",687,663,666,-21],
+["公办","厚街中学","本市户籍",689,657,679,-10],["公办","厚街中学","随迁子女",708,684,678,-30],
+["公办","塘厦中学","本市户籍",662,638,653,-9],["公办","塘厦中学","随迁子女",688,665,659,-29],
+["公办","市第二高级中学","本市户籍",700,679,690,-10],["公办","市第二高级中学","随迁子女",718,700,709,-9],
+["公办","市第四高级中学","本市户籍",654,631,648,-6],["公办","市第四高级中学","随迁子女",669,665,667,-2],
+["公办","市第五高级中学","本市户籍",646,632,645,-1],["公办","市第五高级中学","随迁子女",661,658,657,-4],
+["公办","市第七高级中学","本市户籍",687,669,683,-4],["公办","市第七高级中学","随迁子女",706,688,700,-6],
+["公办","市第八高级中学","本市户籍",682,542,644,-38],["公办","市第八高级中学","随迁子女",709,681,682,-27],
+["公办","麻涌中学","本市户籍",653,637,651,-2],["公办","麻涌中学","随迁子女",669,642,654,-15],
+["公办","济川中学","本市户籍",647,642,647,0],["公办","济川中学","随迁子女",658,654,655,-3],
+["公办","大岭山中学","本市户籍",658,632,649,-9],["公办","大岭山中学","随迁子女",666,659,655,-11],
+["公办","大朗中学","本市户籍",675,654,669,-6],["公办","大朗中学","随迁子女",696,678,682,-14],
+["公办","东莞高级中学(集团)清溪中学","本市户籍",655,637,650,-5],["公办","东莞高级中学(集团)清溪中学","随迁子女",667,661,659,-8],
+["公办","长安中学","本市户籍",655,637,647,-8],["公办","长安中学","随迁子女",667,637,648,-19],
+["公办","市第十高级中学","本市户籍",658,633,647,-11],["公办","市第十高级中学","随迁子女",null,662,657,null],
+["公办","市第十一中学","本市户籍",null,665,682,null],["公办","市第十一中学","随迁子女",null,686,693,null],
+["公办","市第十三高级中学","本市户籍",675,665,676,1],["公办","市第十三高级中学","随迁子女",692,679,688,-4],
+["公办","市第十二高级中学","本市户籍",null,null,649,null],["公办","市第十二高级中学","随迁子女",null,null,660,null],
+["民办","东华高级中学(东城校区)","公费生",749,745,745,-4],["民办","东华高级中学(东城校区)","自费生",691,677,null,null],
+["民办","东华高级中学(生态园校区)","公费生",747,739,744,-3],["民办","东华高级中学(生态园校区)","自费生",645,655,null,null],
+["民办","东华松山湖高级中学","公费生",739,null,741,2],["民办","光明中学","公费生",744,741,736,-8],
+["民办","光明中学","自费生",640,604,null,null],["民办","虎门外语学校","公费生",748,737,747,-1],
+["民办","虎门外语学校","自费生",718,null,null,null],["民办","翰林实验学校(万江)","公费生",734,null,740,6],
+["民办","南城开心实验学校","公费生",737,735,null,null],["民办","南城开心实验学校","自费生",665,637,null,null],
+["民办","粤华学校(东城)","公费生",733,720,731,-2],["民办","粤华学校(东城)","自费生",626,607,521,-105],
+["民办","松山湖莞美学校","公费生",716,709,722,6],["民办","松山湖莞美学校","自费生",629,611,523,-106],
+["民办","礼仁外国语学校(黄江)","公费生",642,675,623,-19],["民办","礼仁外国语学校(黄江)","自费生",617,561,547,-70],
+["民办","丰泰外国语实验高级中学(虎门)","公费生",728,733,741,13],["民办","丰泰外国语实验高级中学(虎门)","自费生",619,564,522,-97],
+["民办","海德实验学校(黄江)","公费生",754,734,737,-17],["民办","海德实验学校(黄江)","自费生",576,616,631,55],
+["民办","海德双语学校(清溪)","公费生",742,735,737,-5],["民办","海德双语学校(清溪)","自费生",657,636,639,-18],
+["民办","北辰高级中学(望牛墩)","公费生",610,687,695,85],["民办","北辰高级中学(望牛墩)","自费生",604,560,520,-84],
+["民办","众美中学(清溪)","公费生",705,695,696,-9],["民办","众美中学(清溪)","自费生",620,570,520,-100],
+["民办","松山湖清澜山学校","自费生",562,530,522,-40],["民办","弘林高级中学(南城)","公费生",686,679,679,-7],
+["民办","弘林高级中学(南城)","自费生",605,573,520,-85],["民办","翰林高级中学(洪梅)","公费生",716,708,721,5],
+["民办","翰林高级中学(洪梅)","自费生",594,602,520,-74],["民办","嘉荣外国语学校(麻涌)","公费生",741,742,750,9],
+["民办","嘉荣外国语学校(麻涌)","自费生",639,630,618,-21],["民办","海逸外国语学校(厚街)","公费生",703,711,718,15],
+["民办","海逸外国语学校(厚街)","自费生",625,566,562,-63],["民办","南城东晖实验学校","公费生",null,657,685,null],
+["民办","南城东晖实验学校","自费生",null,614,572,null],["民办","石竹实验学校(桥头)","公费生",715,null,721,6],
+["民办","石竹实验学校(桥头)","自费生",634,null,null,null],["民办","塘厦水霖学校","公费生",664,null,651,-13],
+["民办","塘厦水霖学校","自费生",624,null,558,-66],
+];
+// --- 高考合并数据 (CSV: 中考+高考一体) ---
+// [地区,校名,中考23,中考24,中考25,特控率,本科率,985率,211率,备注]
+const GK = [
+["深圳","深圳中学",574,567,574,"99.1%","-","65.8%","89.7%","清北85人;C9录取305人;600分率78.6%"],
+["深圳","深圳实验学校(高中部)",573,567,570,"99.1%","-","53.4%","81.2%","清北4人;C9上线80+;中大以上260+"],
+["深圳","深圳外国语学校",572,565,568,"-","-","43.03%","-","清北18人;C9录取率14.34%;华五13%;保送121人"],
+["深圳","深圳高级中学中心校区",572,565,569,"96%","-","-","-","最高695省排38;600分以上655人;600分率72.7%"],
+["深圳","红岭中学",569,560,565,"95%","100%","-","-","清北1人;600+人603;C9约45人;中大58人"],
+["深圳","宝安中学(集团)高中部",568,559,564,"93%","99%","-","-","6人达清北线;600分以上441人(44.5%)"],
+["深圳","深圳大学附属中学(深大附中)",567,558,562,"94%","-","-","-","清北1人;C9录取15人;985录取95人;600分率46%"],
+["深圳","育才中学",567,559,564,"55.03%","97.6%","-","-","清华1人;复旦3人;浙大1人;中大33人"],
+["深圳","深圳科学高中",565,555,560,"超90%","-","-","-","600分以上349人;尖刀班均分640"],
+["深圳","北师大南山附属学校中学部",563,549,562,"-","-","-","-","最高669分;600分率34%;钱学森班600分率70%"],
+["深圳","南山外国语学校(集团)高级中学",561,553,559,"89.32%","-","-","-","物理最高667;6特优班特控率95.45%;600分率超35%"],
+["深圳","南方科技大学附属中学",561,549,556,"-","-","-","-","985录取102人;600分率超39.4%"],
+["深圳","深圳市第二高级中学",561,551,557,"-","-","-","-","物理600+近300人;历史最高675省排15"],
+["深圳","龙城高级中学",560,546,557,"-","-","-","-","物理最高680省排338"],
+["深圳","翠园中学",559,548,557,"85%","-","-","-","600分以上235人;中大以上56人"],
+["深圳","深圳市第二实验学校",558,548,550,"-","-","-","-","物理最高659分"],
+["深圳","龙华高级中学",557,546,553,"63%","98.62%","-","-",""],
+["深圳","深圳实验学校光明高中部",557,543,549,"70.3%","-","-","-","600分以上172人(近20%)"],
+["深圳","人大附中深圳学校",556,545,553,"-","-","-","-","物理656分2人;600分以上180人"],
+["深圳","深圳外国语学校龙华高中部",555,543,549,"-","-","-","-",""],
+["深圳","深圳市高级中学东校区",554,541,548,"-","-","-","-","物理最高667;600分以上140人"],
+["深圳","新安中学(集团)高中部",554,540,543,"79.8%","-","-","-","600分以上125人(15.75%)"],
+["深圳","盐田高级中学",549,537,543,"67.4%","97.9%","-","-","957人参考;600以上86人;最高673"],
+["深圳","华中师范大学龙岗附属中学",550,539,545,"55.03%","97.6%","-","-","914人参考;600分以上62人"],
+["深圳","深圳市高级中学创新高中",null,526,532,"超50%","96.2%","-","-","600分以上超80人"],
+["深圳","东北师范大学附属中学深圳学校",546,535,530,"近50%","-","-","-","600分以上32人"],
+["深圳","深圳市第三高级中学(国内高考班)",null,514,524,"41.6%","90.8%","-","-",""],
+["深圳","龙岗区实验高级中学",532,523,536,"28%","91%","-","-","首届高考;物理最高636"],
+["深圳","深圳市第七高级中学",504,485,501,"-","-","-","-","物理最高649"],
+["深圳","深圳市聚龙科学中学",490,464,485,"-","-","-","-","首届高考;本科率71.25%"],
+["深圳","深圳外国语学校博雅高中",504,485,501,"20%","70%","-","-","物理最高615;历史最高650"],
+["深圳","罗湖外语学校",542,525,522,"-","-","-","-","物理最高657;600+约20人"],
+["深圳","深圳市龙华外国语高级中学",497,482,507,"15%","80%","-","-","首届高考"],
+["东莞","东莞中学",null,null,null,"94.2%","99.5%","超50%","76%","最高687复旦;北大上线23人;211录取率76%"],
+["东莞","东莞中学松山湖学校",null,null,null,"92%","99.8%","约18.5%","约35.7%","600+占比35%;物理最高675"],
+["东莞","东华高级中学",null,null,null,"70.8%","95.2%","-","-","清北19人;985录取620人;211录取1080人;600分以上1040人"],
+["东莞","东莞市第一中学",null,null,null,"73%","98%","-","-","1444人参考;600分以上153人"],
+["东莞","松山湖未来学校",null,null,null,"85%","99.9%","-","-","首届高考;最高677;600+以上124人"],
+["东莞","东莞高级中学",null,null,null,"55%","96%","-","-","1340人参考;600+约53人"],
+["东莞","东莞实验中学",null,null,null,"46%","95%","-","-",""],
+["东莞","东莞外国语学校",null,null,null,"51%","95%","-","-",""],
+["东莞","东莞市第六高级中学",null,null,null,"45%","99%","-","-","1340人参考;最高662;600+约50人"],
+["东莞","石龙中学",null,null,null,"51%","95%","-","-","最高659;600分以上105人"],
+["东莞","常平中学",null,null,null,"27%","91%","-","-","600分以上49人"],
+["东莞","万江中学",null,null,null,"19.7%","85%","-","-","600分以上20人"],
+["东莞","东莞市第二高级中学",null,null,null,"21%","85%","-","-",""],
+["东莞","东莞市第七高级中学",null,null,null,"18.72%","90.06%","-","-","1228人参考;600+17人"],
+];
+// ===================================================================
+// RENDER FUNCTIONS
+// ===================================================================
+let curView='scores', curCity='sz', curGk='sz', curPcy='sz';
+function rSZ(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const s=document.getElementById('sortSelect').value;
+  let l=SZ.filter(r=>!q||r[0].toLowerCase().includes(q));
+  if(s==='score-desc')l.sort((a,b)=>(b[3]||0)-(a[3]||0));
+  else if(s==='score-asc')l.sort((a,b)=>(a[3]||999)-(b[3]||999));
+  else l.sort((a,b)=>a[0].localeCompare(b[0],'zh'));
+  document.getElementById('statsBar').innerHTML=
+    `<div class="stat-card"><div class="num">${SZ.length}</div><div class="label">深圳高中</div></div>
+     <div class="stat-card"><div class="num">${l.length}</div><div class="label">筛选结果</div></div>
+     <div class="stat-card"><div class="num">${SZ.filter(r=>r[3]&&r[3]>=560).length}</div><div class="label">≥560分</div></div>`;
+  const g=document.getElementById('schoolGrid');
+  if(!l.length){g.innerHTML='';document.getElementById('noResult').style.display='block';return;}
+  document.getElementById('noResult').style.display='none';
+  g.innerHTML=l.map(r=>{
+    const t=r[4]!==null&&r[4]!==undefined?(r[4]>0?'<span class="trend-up">↑'+r[4]+'</span>':r[4]<0?'<span class="trend-down">↓'+Math.abs(r[4])+'</span>':'<span class="trend-flat">→</span>'):'<span class="trend-flat">—</span>';
+    return `<div class="school-card" onclick="showD('sz','${r[0]}')"><div class="name">${r[0]}</div>
+      <div class="scores">
+        <span class="score-item">2023: <span class="val">${r[1]||'—'}</span></span>
+        <span class="score-item">2024: <span class="val">${r[2]||'—'}</span></span>
+        <span class="score-item">2025: <span class="val" style="color:var(--blue)">${r[3]||'—'}</span></span>
+        <span class="score-item">趋势: ${t}</span></div></div>`;
+  }).join('');
+}
+function rDG(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const s=document.getElementById('sortSelect').value;
+  const cat=document.getElementById('dgFilter').value;
+  let l=DG.filter(r=>!q||r[1].toLowerCase().includes(q));
+  if(cat!=='all')l=l.filter(r=>r[2]===cat);
+  if(s==='score-desc')l.sort((a,b)=>(b[5]||0)-(a[5]||0));
+  else if(s==='score-asc')l.sort((a,b)=>(a[5]||999)-(b[5]||999));
+  else l.sort((a,b)=>a[1].localeCompare(b[1],'zh'));
+  const uniqueNames=new Set(DG.map(r=>r[1]));
+  document.getElementById('statsBar').innerHTML=
+    `<div class="stat-card"><div class="num">${uniqueNames.size}</div><div class="label">东莞学校</div></div>
+     <div class="stat-card"><div class="num">${l.length}</div><div class="label">当前条目</div></div>
+     <div class="stat-card"><div class="num">${l.filter(r=>r[5]>=700).length}</div><div class="label">≥700分录</div></div>`;
+  const g=document.getElementById('schoolGrid');
+  if(!l.length){g.innerHTML='';document.getElementById('noResult').style.display='block';return;}
+  document.getElementById('noResult').style.display='none';
+  g.innerHTML=l.map(r=>{
+    const tag=r[0]==='公办'?'<span class="tag tag-public">公办</span>':'<span class="tag tag-private">民办</span>';
+    const catTag=r[2]==='公费生'?'<span class="tag tag-gongfei">公费</span>':r[2]==='自费生'?'<span class="tag tag-zifei">自费</span>':'';
+    const t=r[6]!==null&&r[6]!==undefined?(r[6]>0?'<span class="trend-up">↑'+r[6]+'</span>':r[6]<0?'<span class="trend-down">↓'+Math.abs(r[6])+'</span>':'<span class="trend-flat">→</span>'):'';
+    return `<div class="school-card" onclick="showD('dg','${r[1]}')"><div class="name">${r[1]} ${tag} ${catTag}</div>
+      <div class="scores">
+        <span class="score-item">2023: <span class="val">${r[3]||'—'}</span></span>
+        <span class="score-item">2024: <span class="val">${r[4]||'—'}</span></span>
+        <span class="score-item">2025: <span class="val" style="color:var(--blue)">${r[5]||'—'}</span></span>
+        <span class="score-item">${r[2]}</span>${t?'<span class="score-item">'+t+'</span>':''}</div></div>`;
+  }).join('');
+}
+function rSZGK(){
+  const q=document.getElementById('gkSearch').value.trim().toLowerCase();
+  const s=document.getElementById('gkSort').value;
+  let l=GK.filter(r=>r[0]==='深圳'&&(!q||r[1].toLowerCase().includes(q)));
+  if(s==='score-desc')l.sort((a,b)=>{const va=parseFloat(a[5])||0,vb=parseFloat(b[5])||0;return vb-va;});
+  else if(s==='score-asc')l.sort((a,b)=>{const va=parseFloat(a[5])||0,vb=parseFloat(b[5])||0;return va-vb;});
+  else l.sort((a,b)=>a[1].localeCompare(b[1],'zh'));
+  document.getElementById('gkStats').innerHTML=
+    `<div class="stat-card"><div class="num">${GK.filter(r=>r[0]==='深圳').length}</div><div class="label">深圳统计</div></div>
+     <div class="stat-card"><div class="num">${l.filter(r=>r[5]&&r[5]!=='-').length}</div><div class="label">有特控率</div></div>
+     <div class="stat-card"><div class="num">${l.filter(r=>r[6]&&r[6]!=='-').length}</div><div class="label">有本科率</div></div>`;
+  const g=document.getElementById('gkGrid');
+  if(!l.length){g.innerHTML='';document.getElementById('gkNoResult').style.display='block';return;}
+  document.getElementById('gkNoResult').style.display='none';
+  g.innerHTML=l.map(r=>`<div class="school-card">
+    <div class="name">${r[1]} <span class="tag tag-gaokao">高考</span></div>
+    <div class="scores">
+      <span class="score-item">特控: <span class="val">${r[5]||'—'}</span></span>
+      <span class="score-item">本科: <span class="val">${r[6]||'—'}</span></span>
+      <span class="score-item">985率: <span class="val">${r[7]||'—'}</span></span>
+      <span class="score-item">211率: <span class="val">${r[8]||'—'}</span></span>
+    </div>
+    ${r[9]?`<div style="font-size:10px;color:var(--gray);margin-top:4px;">💡 ${r[9]}</div>`:''}
+  </div>`).join('');
+}
+function rDGGK(){
+  const q=document.getElementById('gkSearch').value.trim().toLowerCase();
+  const s=document.getElementById('gkSort').value;
+  let l=GK.filter(r=>r[0]==='东莞'&&(!q||r[1].toLowerCase().includes(q)));
+  if(s==='score-desc')l.sort((a,b)=>{const va=parseFloat(a[5])||0,vb=parseFloat(b[5])||0;return vb-va;});
+  else if(s==='score-asc')l.sort((a,b)=>{const va=parseFloat(a[5])||0,vb=parseFloat(b[5])||0;return va-vb;});
+  else l.sort((a,b)=>a[1].localeCompare(b[1],'zh'));
+  document.getElementById('gkStats').innerHTML=
+    `<div class="stat-card"><div class="num">${GK.filter(r=>r[0]==='东莞').length}</div><div class="label">东莞统计</div></div>
+     <div class="stat-card"><div class="num">${l.filter(r=>r[5]&&r[5]!=='-').length}</div><div class="label">有特控率</div></div>
+     <div class="stat-card"><div class="num">${l.filter(r=>r[6]&&r[6]!=='-').length}</div><div class="label">有本科率</div></div>`;
+  const g=document.getElementById('gkGrid');
+  if(!l.length){g.innerHTML='';document.getElementById('gkNoResult').style.display='block';return;}
+  document.getElementById('gkNoResult').style.display='none';
+  g.innerHTML=l.map(r=>`<div class="school-card">
+    <div class="name">${r[1]} <span class="tag tag-gaokao">高考</span></div>
+    <div class="scores">
+      <span class="score-item">特控: <span class="val">${r[5]||'—'}</span></span>
+      <span class="score-item">本科: <span class="val">${r[6]||'—'}</span></span>
+      <span class="score-item">985率: <span class="val">${r[7]||'—'}</span></span>
+      <span class="score-item">211率: <span class="val">${r[8]||'—'}</span></span>
+    </div>
+    ${r[9]?`<div style="font-size:10px;color:var(--gray);margin-top:4px;">💡 ${r[9]}</div>`:''}
+  </div>`).join('');
+}
+function renderScores(){curCity==='sz'?rSZ():rDG();}
+function renderGK(){curGk==='sz'?rSZGK():rDGGK();}
+// --- Policy ---
+const P_SZ=`
+<div class="policy-toc"><a href="#sz1">📅 时间</a><a href="#sz2">📋 批次</a><a href="#sz3">📌 录取</a><a href="#sz4">🏷️ 指标</a><a href="#sz5">🎯 自招</a><a href="#sz6">🚶 走读</a><a href="#sz7">📈 中本</a></div>
+<div class="policy-card" id="sz1"><h4><span class="policy-badge badge-imp">重要</span>2026年重大变化</h4>
+<table><tr><th>项目</th><th>2025年</th><th>2026年</th></tr>
+<tr><td>中考总分</td><td>610分</td><td><strong>630分 ↑</strong></td></tr>
+<tr><td>理化实验操作</td><td>12分</td><td><strong>20分 ↑</strong></td></tr>
+<tr><td>道德与法治</td><td>闭卷笔试</td><td><strong>开卷笔试</strong></td></tr>
+<tr><td>体育与健康</td><td>50分(仅现场)</td><td>50分(现场36+过程性14)</td></tr>
+<tr><td>体育现场考试</td><td>两大类</td><td>三大类(16小项)各选一项</td></tr>
+<tr><td>公办普高走读计划</td><td>首次实施</td><td>继续实施</td></tr></table>
+<h4 style="margin-top:8px;">📅 志愿填报（2026年）</h4>
+<ul><li><strong>填报时间</strong>：<span class="highlight">5月23日10:00 — 6月1日18:00</span></li>
+<li>每位考生共<strong>3次确认机会</strong>，第三次后不可修改</li>
+<li>平台：<a href="http://www.szzk.edu.cn" target="_blank">szzk.edu.cn</a></li></ul></div>
+<div class="policy-card" id="sz2"><h4>📋 录取批次（5大批次）</h4>
+<table><tr><th>批次</th><th>志愿数</th><th>说明</th></tr>
+<tr><td>1️⃣ 自主招生批</td><td><strong>1个</strong></td><td>普高/中职/技工自主招生</td></tr>
+<tr><td>2️⃣ 名额分配批</td><td><strong>1个</strong></td><td>指标生志愿</td></tr>
+<tr><td>3️⃣ 统一招生(第一批)</td><td><strong>16个</strong></td><td>最多12个普高+4个中职；可≤4个勾选「接受走读调剂」</td></tr>
+<tr><td>4️⃣ 统一招生(第二批)</td><td><strong>18个</strong></td><td>中职类院校专业志愿</td></tr>
+<tr><td>5️⃣ 统一招生(第三批)</td><td><strong>6个</strong></td><td>部省属(含跨市)中职类院校</td></tr></table>
+<p style="margin-top:6px;font-size:11px;">💡 凡按志愿录取的考生一律不得退档或转录</p></div>
+<div class="policy-card" id="sz3"><h4>📌 录取规则</h4>
+<ul><li><strong>投档原则：分数优先、依照志愿顺序</strong></li>
+<li><strong>同分比较</strong>：① 生地合卷分数高 → ② 语数英三科总分高</li>
+<li>省一级学校录取要求：综合素质评价"达标"；单科等级C+以上，体育C以上</li>
+<li>⛔ 第二次划线录取阶段已无公办普高计划，务必选好保底</li></ul></div>
+<div class="policy-card" id="sz4"><h4>🏷️ 指标生（名额分配）</h4>
+<ul><li>分配比例：公办普高招生计划的 <span class="highlight">50%</span></li>
+<li>录取控制线：前三年(2023-2025)录取分数线平均值下降20分（考虑2026年总分变化，同比例换算）</li></ul></div>
+<div class="policy-card" id="sz5"><h4>🎯 自主招生</h4>
+<ul><li>中职及技工院校自主招生考核在中考前进行</li>
+<li>被自招录取的考生必须参加中考，但不再填报志愿、不得退档转录</li></ul></div>
+<div class="policy-card" id="sz6"><h4>🚶 走读生调剂</h4>
+<ul><li>仅针对同时有住宿/走读计划的公办普高</li>
+<li>先检住宿→满额检走读→走读录取后不得转住宿、不得要求跳转后续志愿</li></ul></div>
+<div class="policy-card" id="sz7"><h4>📈 新升学路径</h4>
+<ul><li><strong>三二分段</strong>：3年中职+2年高职</li>
+<li><strong>3+4中本贯通</strong>：3年中职+4年本科，转段后获全日制本科文凭</li></ul></div>
+`;
+const P_DG=`
+<div class="policy-toc"><a href="#dg1">📅 时间</a><a href="#dg2">📋 志愿优化</a><a href="#dg3">📌 批次</a><a href="#dg4">🏷️ 指标</a><a href="#dg5">🎯 自招</a><a href="#dg6">🏃 体育</a></div>
+<div class="policy-card" id="dg1"><h4><span class="policy-badge badge-imp">重要</span>2026年重大变化</h4>
+<table><tr><th>项目</th><th>变化内容</th></tr>
+<tr><td>新增学校</td><td>水乡未来学校、湾区中学、市第九高级中学3所新校招生</td></tr>
+<tr><td>志愿数量</td><td>每批<strong>4个→6个</strong>，总数<strong>16个→24个</strong></td></tr>
+<tr><td>优质高中分差</td><td><strong>15分→5分</strong>，1-3志愿可填报</td></tr>
+<tr><td>其他普高</td><td>改为<strong>平行志愿不设分差</strong>，大幅降低滑档风险</td></tr>
+<tr><td>补录控制线</td><td><span class="policy-badge badge-new">新增</span>第一批次补录控制线</td></tr></table>
+<h4>📅 时间安排</h4>
+<ul><li><strong>志愿填报</strong>：5月27日9:00 — 6月3日24:00</li>
+<li><strong>中考</strong>：6月30日 — 7月2日，总分<strong>800分</strong></li></ul></div>
+<div class="policy-card" id="dg2"><h4>📋 志愿规则优化</h4>
+<ul><li><strong>志愿数增加</strong>：第1-4批各6个志愿(原4个)，总数24个(原16个)</li>
+<li><strong>分差缩小</strong>：名额分配优高和东华光明公费生分差由15分→5分</li>
+<li><strong>平行志愿</strong>：其他普高取消5分分差，改平行志愿不设分差</li>
+<li>第一批次新增<strong>补录控制线</strong></li></ul></div>
+<div class="policy-card" id="dg3"><h4>📌 录取批次</h4>
+<ul><li>提前批：普通高中自主招生、港澳班</li>
+<li>第一批：公办/民办普通高中（6个志愿）</li>
+<li>第二批：公办中职/技工（6个志愿）</li>
+<li>第三批：民办中职/技工（6个志愿）</li>
+<li>第四批：五年一贯制、外市中职（6个志愿）</li>
+<li>另有2次补录</li></ul></div>
+<div class="policy-card" id="dg4"><h4>🏷️ 名额分配（指标到校）</h4>
+<ul><li><strong>新增5所</strong>：水乡未来学校、湾区中学、市第九高级中学、市第二高级中学、市第七高级中学</li>
+<li><strong>参与学校共16所</strong>优质普高</li>
+<li><strong>名额超9000个</strong>，比上年增加2000+，增幅超30%</li>
+<li>比例50%，台湾户籍及政策性照顾考生可参与</li></ul></div>
+<div class="policy-card" id="dg5"><h4>🎯 自主招生改革</h4>
+<ul><li>考试从<strong>两轮(校考+市考)→一轮(市统筹)</strong></li>
+<li>减轻考试负担，加强公平公正</li></ul></div>
+<div class="policy-card" id="dg6"><h4>🏃 体育中考改革(首年)</h4>
+<ul><li><strong>成绩可互补</strong>：必考/选考/体能三项各120分，均分超100按100计</li>
+<li><strong>体能素质改自选</strong>：5项中自选1项</li>
+<li>降低引体向上(男)/平行梯悬垂攀移(女)/三大球评分标准</li>
+<li>2028年起平时考核分值从6分→<strong>30分(50%)</strong></li></ul>
+<h4 style="margin-top:8px;">📝 其他</h4>
+<ul><li>初二地理生物改为等级制(A/B/C/D/E)，不计入2027年录取分</li>
+<li>⛔ 警惕"熟人帮忙""提前锁定学位"骗局</li></ul></div>
+`;
+function rPolicy(){document.getElementById('policyContent').innerHTML=curPcy==='sz'?P_SZ:P_DG;}
+// ===================================================================
+// DETAIL
+// ===================================================================
+function showD(t,n){
+  let html;
+  if(t==='sz'){
+    const r=SZ.find(s=>s[0]===n);
+    if(!r)return;
+    html=`<h2>${r[0]}</h2><table class="detail-table"><tr><th>年份</th><th>AC类</th></tr>
+      <tr><td>2023</td><td>${r[1]||'—'}</td></tr><tr><td>2024</td><td>${r[2]||'—'}</td></tr>
+      <tr><td><strong>2025</strong></td><td><strong>${r[3]||'—'}</strong></td></tr>
+      <tr><td>变化</td><td>${r[4]!==null?(r[4]>0?'⬆️ +'+r[4]:r[4]<0?'⬇️ '+r[4]:'➡️ 持平'):'—'}</td></tr></table>
+      <p style="margin-top:8px;font-size:11px;color:var(--gray);">📌 ima知识库·深圳高中近3年中考录取分数线</p>`;
+  } else {
+    const rs=DG.filter(r=>r[1]===n);
+    if(!rs.length)return;
+    html=`<h2>${n}</h2><table class="detail-table"><tr><th>类别</th><th>2023</th><th>2024</th><th>2025</th><th>趋势</th></tr>
+      ${rs.map(r=>`<tr><td>${r[2]}</td><td>${r[3]||'—'}</td><td>${r[4]||'—'}</td><td><strong>${r[5]||'—'}</strong></td>
+      <td>${r[6]!==null?(r[6]>0?'⬆️ +'+r[6]:r[6]<0?'⬇️ '+r[6]:'➡️'):'—'}</td></tr>`).join('')}</table>
+      <p style="margin-top:8px;font-size:11px;color:var(--gray);">📌 ima知识库·东莞高中近3年中考录取分数线</p>`;
+  }
+  document.getElementById('detailBody').innerHTML=html;
+  document.getElementById('detailPanel').classList.add('show');
+}
+function closeDetail(){document.getElementById('detailPanel').classList.remove('show');}
+document.getElementById('detailPanel').addEventListener('click',function(e){if(e.target===this)closeDetail();});
+// ===================================================================
+// VIEW SWITCH
+// ===================================================================
+function swView(v){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  ['viewScores','viewGaokao','viewPolicy'].forEach(id=>{
+    const m='view'+v.charAt(0).toUpperCase()+v.slice(1);
+    document.getElementById(id).style.display=id===m?'block':'none';
+  });
+  curView=v;
+  if(v==='scores')renderScores();
+  else if(v==='gaokao')renderGK();
+  else if(v==='policy')rPolicy();
+}
+document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>swView(t.dataset.view)));
+document.querySelectorAll('#cityTabs .sub-tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('#cityTabs .sub-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+    curCity=this.dataset.city;
+    const f=document.getElementById('dgFilter');
+    if(curCity==='sz'){f.style.display='none';}else{f.style.display='block';}
+    renderScores();
+  });
+});
+document.querySelectorAll('#gkTabs .sub-tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('#gkTabs .sub-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+    curGk=this.dataset.gk;
+    renderGK();
+  });
+});
+document.querySelectorAll('#pcyTabs .sub-tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('#pcyTabs .sub-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+    curPcy=this.dataset.pcy;
+    rPolicy();
+  });
+});
+document.getElementById('searchInput').addEventListener('input',renderScores);
+document.getElementById('dgFilter').addEventListener('change',renderScores);
+document.getElementById('sortSelect').addEventListener('change',renderScores);
+document.getElementById('gkSearch').addEventListener('input',renderGK);
+document.getElementById('gkSort').addEventListener('change',renderGK);
+window.addEventListener('scroll',()=>{document.getElementById('backTop').style.display=window.scrollY>400?'block':'none';});
+document.getElementById('dgFilter').style.display='none';
+renderScores();
+</script>
+</body>
+</html>
