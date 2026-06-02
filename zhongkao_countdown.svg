@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 440" width="100%">
+  <rect x="0" y="0" width="680" height="440" rx="20" fill="#E6F1FB"/>
+  <rect x="0" y="0" width="680" height="140" rx="20" fill="#185FA5"/>
+  <rect x="0" y="120" width="680" height="20" fill="#185FA5"/>
+  <text x="340" y="48" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="28" font-weight="700">2026 中考倒计时</text>
+  <text x="340" y="82" text-anchor="middle" fill="#B5D4F4" font-family="system-ui, sans-serif" font-size="14">距深圳中考 6月26日 · 距东莞中考 6月30日</text>
+  <text x="340" y="115" text-anchor="middle" fill="#85B7EB" font-family="system-ui, sans-serif" font-size="12">志存高远 · 脚踏实地</text>
+
+  <rect x="80" y="175" width="220" height="220" rx="16" fill="#fff"/>
+  <text x="190" y="215" text-anchor="middle" fill="#378ADD" font-family="system-ui, sans-serif" font-size="13" font-weight="500">深圳中考</text>
+  <text x="190" y="310" text-anchor="middle" fill="#185FA5" font-family="system-ui, sans-serif" font-size="72" font-weight="700">24</text>
+  <text x="190" y="340" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="15">天</text>
+  <text x="190" y="370" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="12">6月26日 – 6月28日</text>
+
+  <line x1="310" y1="200" x2="370" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+
+  <rect x="380" y="175" width="220" height="220" rx="16" fill="#fff"/>
+  <text x="490" y="215" text-anchor="middle" fill="#378ADD" font-family="system-ui, sans-serif" font-size="13" font-weight="500">东莞中考</text>
+  <text x="490" y="310" text-anchor="middle" fill="#185FA5" font-family="system-ui, sans-serif" font-size="72" font-weight="700">28</text>
+  <text x="490" y="340" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="15">天</text>
+  <text x="490" y="370" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="12">6月30日 – 7月2日</text>
+
+  <circle cx="190" cy="280" r="52" fill="none" stroke="#E6F1FB" stroke-width="4"/>
+  <circle cx="190" cy="280" r="52" fill="none" stroke="#378ADD" stroke-width="4" stroke-dasharray="327" stroke-dashoffset="45" transform="rotate(-90 190 280)"/>
+
+  <circle cx="490" cy="280" r="52" fill="none" stroke="#E6F1FB" stroke-width="4"/>
+  <circle cx="490" cy="280" r="52" fill="none" stroke="#378ADD" stroke-width="4" stroke-dasharray="327" stroke-dashoffset="85" transform="rotate(-90 490 280)"/>
+
+  <text x="340" y="420" text-anchor="middle" fill="#B4B2A9" font-family="system-ui, sans-serif" font-size="11">数据来源：深圳市教育局 · 东莞市教育局 · ima知识库</text>
+</svg>

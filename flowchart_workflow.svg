@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 280" width="100%">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <text x="340" y="36" text-anchor="middle" fill="#0C447C" font-family="system-ui, sans-serif" font-size="16" font-weight="500">工作流：从素材到网站</text>
+
+  <g>
+    <rect x="50" y="72" width="120" height="56" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text x="110" y="88" text-anchor="middle" fill="#633806" font-family="system-ui, sans-serif" font-size="13" font-weight="500" dominant-baseline="central">素材</text>
+    <text x="110" y="108" text-anchor="middle" fill="#854F0B" font-family="system-ui, sans-serif" font-size="11" dominant-baseline="central">CSV · PDF · MD</text>
+  </g>
+
+  <line x1="170" y1="100" x2="210" y2="100" stroke="#888780" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="215" y="72" width="120" height="56" rx="10" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+    <text x="275" y="88" text-anchor="middle" fill="#0C447C" font-family="system-ui, sans-serif" font-size="13" font-weight="500" dominant-baseline="central">ima 知识库</text>
+    <text x="275" y="108" text-anchor="middle" fill="#185FA5" font-family="system-ui, sans-serif" font-size="11" dominant-baseline="central">存储 · 索引 · 管理</text>
+  </g>
+
+  <line x1="335" y1="100" x2="375" y2="100" stroke="#185FA5" stroke-width="1.8" marker-end="url(#arrow-blue)"/>
+
+  <g>
+    <rect x="380" y="72" width="120" height="56" rx="10" fill="#EEEDFE" stroke="#7F77DD" stroke-width="0.5"/>
+    <text x="440" y="88" text-anchor="middle" fill="#3C3489" font-family="system-ui, sans-serif" font-size="13" font-weight="500" dominant-baseline="central">AI 助手</text>
+    <text x="440" y="108" text-anchor="middle" fill="#534AB7" font-family="system-ui, sans-serif" font-size="11" dominant-baseline="central">读取 · 分析 · 编程</text>
+  </g>
+
+  <line x1="500" y1="100" x2="540" y2="100" stroke="#888780" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="545" y="72" width="110" height="56" rx="10" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+    <text x="600" y="88" text-anchor="middle" fill="#27500A" font-family="system-ui, sans-serif" font-size="13" font-weight="500" dominant-baseline="central">成品网站</text>
+    <text x="600" y="108" text-anchor="middle" fill="#3B6D11" font-family="system-ui, sans-serif" font-size="11" dominant-baseline="central">HTML 页面</text>
+  </g>
+
+  <line x1="50" y1="165" x2="655" y2="165" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="50" y="183" fill="#888780" font-family="system-ui, sans-serif" font-size="11">时间线</text>
+  <circle cx="110" cy="165" r="5" fill="#BA7517"/>
+  <text x="110" y="195" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="10">整理数据</text>
+  <circle cx="275" cy="165" r="5" fill="#378ADD"/>
+  <text x="275" y="195" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="10">导入知识库</text>
+  <circle cx="440" cy="165" r="5" fill="#7F77DD"/>
+  <text x="440" y="195" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="10">AI 处理</text>
+  <circle cx="600" cy="165" r="5" fill="#639922"/>
+  <text x="600" y="195" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="10">交付使用</text>
+
+  <rect x="80" y="220" width="520" height="40" rx="8" fill="#F1EFE8"/>
+  <text x="340" y="240" text-anchor="middle" fill="#444441" font-family="system-ui, sans-serif" font-size="12" dominant-baseline="central">数据归知识库管，代码归 AI 管，你只管「我要什么」</text>
+
+  <path d="M655 130 Q680 130 680 100 Q680 72 655 72" fill="none" stroke="#D3D1C7" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+  <text x="668" y="60" text-anchor="middle" fill="#888780" font-family="system-ui, sans-serif" font-size="10">迭代更新</text>
+</svg>
